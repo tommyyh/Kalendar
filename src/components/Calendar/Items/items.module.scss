@@ -1,0 +1,50 @@
+$height: 2.915rem;
+
+.cont {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  // Individual column
+  li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: $height;
+    height: $height;
+
+    font-size: 0.92rem;
+    font-weight: 400;
+    list-style: none;
+    border: 1px solid var(--border);
+    border-radius: 0.38rem;
+
+    &:last-child {
+      border-right: 1px solid var(--border);
+    }
+
+    // Date number
+    span {
+      font-size: 0.82rem;
+      margin: -0.18rem 0 0 0;
+    }
+  }
+
+  // Code label
+  .code {
+    min-width: 5rem;
+    height: $height;
+  }
+
+  // Item label
+  .item {
+    align-items: initial;
+    padding: 0 0 0 1rem;
+
+    min-width: 20rem;
+    height: $height;
+  }
+}

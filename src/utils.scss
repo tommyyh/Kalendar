@@ -1,0 +1,15 @@
+@mixin buttonPreset {
+  padding: 0.57rem 1.6rem 0.67rem 1.6rem;
+
+  background: var(--primary);
+  border-radius: 0.3rem;
+  border: none;
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--accent);
+  transition: var(--transition);
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

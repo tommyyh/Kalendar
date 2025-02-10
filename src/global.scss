@@ -1,0 +1,35 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --font: 'Satoshi', sans-serif;
+
+  --primary: #fff;
+  --accent: #481fff;
+
+  --border: rgb(255, 255, 255, 0.475);
+
+  --transition: ease 250ms;
+}
+
+body {
+  padding: 2rem;
+
+  font-family: var(--font);
+  background: var(--accent);
+  color: var(--primary);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: var(--font);
+}
+
+button {
+  cursor: pointer;
+}

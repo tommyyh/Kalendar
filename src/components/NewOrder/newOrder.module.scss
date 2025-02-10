@@ -1,0 +1,14 @@
+@import '../../utils.scss';
+
+.button {
+  @include buttonPreset;
+
+  border: 1px solid transparent;
+}
+
+// Button open state
+.buttonOpen {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
