@@ -39,6 +39,7 @@ export const populateDaysArray = (year, month) => {
       const day = {
         date: i,
         dateName: dayName,
+        fullDate: `${nextYear}-${nextMonth}-${i}`,
       };
 
       days.push(day);

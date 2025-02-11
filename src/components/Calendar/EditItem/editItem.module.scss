@@ -1,13 +1,23 @@
 @import '../../../utils.scss';
 
 .form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   margin: 1.3rem 0 0 0;
+  padding: 0 1rem 0 0;
   height: 0rem;
 
   pointer-events: none;
   opacity: 0;
   transition: var(--transition);
-  // height: 2.25rem;
+
+  // Main group
+  .main {
+    width: 100%;
+    height: 100%;
+  }
 
   input,
   select {
@@ -21,9 +31,8 @@
     border: none;
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--accent);
-    transition: var(--transition);
     color: var(--primary);
+    transition: var(--transition);
 
     &::placeholder {
       color: var(--primary);
@@ -31,6 +40,7 @@
 
     option {
       color: var(--accent);
+      font-weight: 600;
     }
   }
 
@@ -54,4 +64,18 @@
 
   pointer-events: initial;
   opacity: 100%;
+}
+
+// Delete button
+#delete {
+  background: #ff2e2a;
+  border: 2px solid transparent;
+  color: var(--primary);
+  opacity: 1;
+
+  &:hover {
+    background: transparent;
+    border-color: #fff;
+    color: #fff;
+  }
 }

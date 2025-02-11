@@ -47,4 +47,45 @@ $height: 2.915rem;
     min-width: 20rem;
     height: $height;
   }
+
+  .parentItem {
+    flex-direction: initial;
+    align-items: center;
+    justify-content: flex-start;
+
+    button {
+      height: 1.13rem;
+      min-width: 1.13rem;
+      margin: -0.038rem 0.44rem 0 0;
+
+      background: var(--primary);
+      border: none;
+      border-radius: 2rem;
+      font-size: 1.05rem;
+      line-height: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      transition: var(--transition);
+
+      &:hover {
+        opacity: 0.63;
+      }
+    }
+  }
+}
+
+// Status colors
+#activeOngoing {
+  background: #ff2e2a;
+  border-color: transparent;
+}
+
+#activeUnfinished {
+  background: #ff8f18;
+  border-color: transparent;
+}
+
+#activeFinished {
+  background: #1bfc31;
+  border-color: transparent;
 }

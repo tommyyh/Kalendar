@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import style from './newOrder.module.scss';
 import Form from './Form/Form';
 
-const NewOrder = ({ setItems, items }) => {
-  const [formOpen, setFormOpen] = useState(false);
-
+const NewOrder = ({
+  formOpen,
+  setFormOpen,
+  date,
+  setItems,
+  items,
+  editCode,
+  setEditCode,
+}) => {
   // Button on click
   const onClick = () => {
+    if (editCode) return setEditCode('');
+
     setFormOpen(!formOpen);
   };
 
@@ -14,11 +22,13 @@ const NewOrder = ({ setItems, items }) => {
     <>
       <button
         className={
-          formOpen ? `${style.button} ${style.buttonOpen}` : style.button
+          formOpen || editCode
+            ? `${style.button} ${style.buttonOpen}`
+            : style.button
         }
         onClick={onClick}
       >
-        {formOpen ? 'Zavřít' : 'Vložit zakázku'}
+        {formOpen || editCode ? 'Zavřít' : 'Vložit zakázku'}
       </button>
 
       <Form formOpen={formOpen} setItems={setItems} items={items} />

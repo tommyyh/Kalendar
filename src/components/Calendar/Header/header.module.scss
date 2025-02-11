@@ -19,12 +19,10 @@ $height: 2.915rem;
     font-size: 0.92rem;
     font-weight: 600;
     list-style: none;
-    border: 1px solid var(--primary);
+    background: rgb(255, 255, 255, 0.9);
     border-radius: 0.38rem;
-
-    &:last-child {
-      border-right: 1px solid var(--primary);
-    }
+    color: var(--accent);
+    border-right: 1px solid #c4c4c4;
 
     // Date number
     span {

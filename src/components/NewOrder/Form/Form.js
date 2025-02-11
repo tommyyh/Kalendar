@@ -15,10 +15,33 @@ const Form = ({ formOpen, setItems, items }) => {
 
   // Submit form
   const submit = () => {
-    setItems([
-      ...items,
-      { code: data.code, title: data.title, parent: data.parent },
-    ]);
+    if (!data.parent) {
+      setItems([
+        ...items,
+        { code: data.code, title: data.title, parent: data.parent },
+      ]);
+      // Empty form
+      setData({ code: '', title: '', parent: '' });
+
+      return;
+    }
+
+    let dupe = [...items];
+    const parentIndex = items.findIndex((x) => x.code === data.parent);
+    const parentItem = items.find((x) => x.code === data.parent);
+
+    dupe.splice(parentIndex + 1, 0, {
+      code: data.code,
+      title: data.title,
+      parent: data.parent,
+    });
+
+    // Update again -> item that's about to be a parent
+    const finalArray = dupe.map((item) =>
+      item.code === parentItem.code ? { ...item, isParent: true } : item
+    );
+
+    setItems(finalArray);
 
     // Empty form
     setData({ code: '', title: '', parent: '' });
@@ -40,13 +63,21 @@ const Form = ({ formOpen, setItems, items }) => {
         onChange={(e) => onChange(e.target.value, 'title')}
         value={data.title}
       />
-      <input
-        type='text'
-        placeholder='Kod nadřazené zakázky'
+      <select
         name='parent'
         onChange={(e) => onChange(e.target.value, 'parent')}
         value={data.parent}
-      />
+      >
+        <option defaultValue value={items[0]}>
+          Kod nadřazené zakázky
+        </option>
+
+        {items.map((item) => (
+          <option value={item.code} key={item.code}>
+            {item.code}
+          </option>
+        ))}
+      </select>
 
       <button
         type='button'
