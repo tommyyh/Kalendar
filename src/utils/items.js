@@ -15,7 +15,7 @@ export const isDateBetween = (date, start, end) => {
 
 // Recursive function -> delete an item and all its descendants
 export const deleteCascade = (code, items) => {
-  // Find all direct children of the given code
+  // Find all direct children of parent
   const children = items.filter((item) => item.parent === code);
 
   // Recursively delete descendants
@@ -25,4 +25,20 @@ export const deleteCascade = (code, items) => {
 
   // Remove the parent
   return items.filter((item) => item.code !== code);
+};
+
+// Toggle show true/false -> cascade
+export const toggleShow = (code, items, newShowValue) => {
+  // Find direct children
+  const children = items.filter((item) => item.parent === code);
+
+  // Update all descendants - recursion
+  children.forEach((child) => {
+    items = toggleShow(child.code, items, newShowValue);
+  });
+
+  // Update the children
+  return items.map((item) =>
+    item.parent === code ? { ...item, show: newShowValue } : item
+  );
 };

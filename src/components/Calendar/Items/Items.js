@@ -1,7 +1,10 @@
 import React from 'react';
 import style from './items.module.scss';
 import { v4 } from 'uuid';
-import { isDateBetween as isDateBetweenFc } from '../../../utils/items';
+import {
+  isDateBetween as isDateBetweenFc,
+  toggleShow,
+} from '../../../utils/items';
 
 const Items = ({
   date,
@@ -88,11 +91,9 @@ const Item = ({
   };
 
   const showChildren = () => {
-    const updatedChildren = items.map((item) =>
-      item.parent === code ? { ...item, show: !item.show } : item
-    );
+    const updatedItems = toggleShow(code, items, !firstChild?.show);
 
-    setItems(updatedChildren);
+    setItems(updatedItems);
   };
 
   return (
