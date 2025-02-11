@@ -12,3 +12,17 @@ export const isDateBetween = (date, start, end) => {
   // Check if the date is between the start and end dates (inclusive)
   return dateString >= startString && dateString <= endString;
 };
+
+// Recursive function -> delete an item and all its descendants
+export const deleteCascade = (code, items) => {
+  // Find all direct children of the given code
+  const children = items.filter((item) => item.parent === code);
+
+  // Recursively delete descendants
+  children.forEach((child) => {
+    items = deleteCascade(child.code, items);
+  });
+
+  // Remove the parent
+  return items.filter((item) => item.code !== code);
+};

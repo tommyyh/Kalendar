@@ -39,6 +39,12 @@ $height: 2.915rem;
     height: $height;
   }
 
+  .active {
+    border-left: 3px solid #ff2e2a;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
   // Item label
   .item {
     align-items: initial;

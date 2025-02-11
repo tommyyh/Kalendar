@@ -18,7 +18,7 @@ const Form = ({ formOpen, setItems, items }) => {
     if (!data.parent) {
       setItems([
         ...items,
-        { code: data.code, title: data.title, parent: data.parent },
+        { code: data.code, title: data.title, parent: data.parent, show: true },
       ]);
       // Empty form
       setData({ code: '', title: '', parent: '' });
@@ -28,20 +28,26 @@ const Form = ({ formOpen, setItems, items }) => {
 
     let dupe = [...items];
     const parentIndex = items.findIndex((x) => x.code === data.parent);
-    const parentItem = items.find((x) => x.code === data.parent);
 
+    // Insert children right after parent
     dupe.splice(parentIndex + 1, 0, {
       code: data.code,
       title: data.title,
       parent: data.parent,
+      show: true,
     });
 
-    // Update again -> item that's about to be a parent
-    const finalArray = dupe.map((item) =>
-      item.code === parentItem.code ? { ...item, isParent: true } : item
+    // Ensure all children of the parent have show: true
+    dupe = dupe.map((item) =>
+      item.parent === data.parent ? { ...item, show: true } : item
     );
 
-    setItems(finalArray);
+    setItems(dupe);
+
+    // Empty form
+    setData({ code: '', title: '', parent: '' });
+
+    setItems(dupe);
 
     // Empty form
     setData({ code: '', title: '', parent: '' });

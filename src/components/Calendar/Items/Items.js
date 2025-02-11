@@ -3,7 +3,14 @@ import style from './items.module.scss';
 import { v4 } from 'uuid';
 import { isDateBetween as isDateBetweenFc } from '../../../utils/items';
 
-const Items = ({ date, items, setEditCode, setFormOpen, editCode }) => {
+const Items = ({
+  date,
+  items,
+  setEditCode,
+  setFormOpen,
+  editCode,
+  setItems,
+}) => {
   return (
     <>
       {items.map((item) => (
@@ -13,6 +20,8 @@ const Items = ({ date, items, setEditCode, setFormOpen, editCode }) => {
           setEditCode={setEditCode}
           setFormOpen={setFormOpen}
           editCode={editCode}
+          items={items}
+          setItems={setItems}
           key={item.code}
         />
       ))}
@@ -20,10 +29,22 @@ const Items = ({ date, items, setEditCode, setFormOpen, editCode }) => {
   );
 };
 
-const Item = ({ item, date, setEditCode, setFormOpen, editCode }) => {
-  const { title, code, parent, start, end, status } = item;
+const Item = ({
+  item,
+  date,
+  setEditCode,
+  setFormOpen,
+  editCode,
+  items,
+  setItems,
+}) => {
+  const { title, code, parent, start, end, status, show } = item;
   const { year, month, days } = date;
+  const firstChild = items.find((x) => x.parent === code);
+  const expandedIndicator = firstChild?.show || (show && parent);
   let statusClass;
+  const isParent = items.filter((item) => item.parent === code).length >= 1;
+  const randomNum = Math.floor(Math.random() * 100) + 1;
 
   // Allocate class depending on status
   switch (status) {
@@ -66,27 +87,49 @@ const Item = ({ item, date, setEditCode, setFormOpen, editCode }) => {
     return isDateBetweenFc(dateToCompare, start, end);
   };
 
-  return (
-    <ul className={style.cont} key={code}>
-      {/* Item */}
-      <li className={style.code} onClick={onClick}>
-        {code}
-      </li>
-      <li className={style.item} onClick={onClick}>
-        {title}
-      </li>
+  const showChildren = () => {
+    const updatedChildren = items.map((item) =>
+      item.parent === code ? { ...item, show: !item.show } : item
+    );
 
-      {/* Map date columns - fill ones with corresponding date */}
-      {days.map((day) => (
+    setItems(updatedChildren);
+  };
+
+  return (
+    show && (
+      <ul className={style.cont} key={code}>
+        {/* Item */}
         <li
-          key={v4()}
+          className={
+            expandedIndicator ? `${style.code} ${style.active}` : style.code
+          }
           onClick={onClick}
-          id={isDateBetween(day) ? statusClass : ''}
         >
-          {}
+          {code}
         </li>
-      ))}
-    </ul>
+        <li
+          className={
+            isParent ? `${style.item} ${style.parentItem}` : style.item
+          }
+        >
+          {isParent && (
+            <button onClick={showChildren}>
+              {firstChild?.show ? '-' : '+'}
+            </button>
+          )}{' '}
+          {title}
+        </li>
+
+        {/* Map date columns - fill ones with corresponding date */}
+        {days.map((day) => (
+          <li
+            key={v4()}
+            onClick={onClick}
+            id={isDateBetween(day) ? statusClass : ''}
+          ></li>
+        ))}
+      </ul>
+    )
   );
 };
 

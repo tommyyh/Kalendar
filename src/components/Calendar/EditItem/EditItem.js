@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import style from './editItem.module.scss';
+import { deleteCascade } from '../../../utils/items';
 
 const EditItem = ({ setItems, items, editCode, setEditCode }) => {
   const today = new Date();
@@ -52,9 +53,10 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
     setEditCode(code);
   };
 
-  // Delete item from list
+  // Delete from list
   const deleteItem = () => {
-    const newArray = items.filter((item) => item.code !== editCode);
+    // Delete all
+    const newArray = deleteCascade(editCode, items);
 
     setItems(newArray);
     setEditCode('');

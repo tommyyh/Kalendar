@@ -29,6 +29,7 @@ const Calendar = ({
         setEditCode={setEditCode}
         setFormOpen={setFormOpen}
         editCode={editCode}
+        setItems={setItems}
       />
     </div>
   );
