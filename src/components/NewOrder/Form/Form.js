@@ -15,6 +15,7 @@ const Form = ({ formOpen, setItems, items }) => {
 
   // Submit form
   const submit = () => {
+    // ----------------------
     if (!data.parent) {
       setItems([
         ...items,

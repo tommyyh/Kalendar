@@ -16,8 +16,8 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
   // Item change -> Update existing data
   useEffect(() => {
     setData({
-      start: item?.start,
-      end: item?.end,
+      start: item?.start || '',
+      end: item?.end || '',
       status: item?.status || 'ongoing',
     });
   }, [editCode]);
@@ -69,9 +69,10 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
           name='code'
           onChange={(e) => selectNewItem(e.target.value)}
           style={{ width: '5rem' }}
+          defaultValue={editCode}
         >
           {codesArray.map((code) => (
-            <option value={code} selected={code === editCode} key={code}>
+            <option value={code} key={code}>
               {code}
             </option>
           ))}
@@ -83,8 +84,10 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
           name='start'
           onChange={(e) => onChange(e.target.value, 'start')}
           value={data.start}
-          min={today.toLocaleDateString('fr-CA')}
           max={data.end}
+          onKeyDown={(e) => {
+            e.preventDefault();
+          }}
         />
         <input
           type='date'
@@ -94,6 +97,9 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
           value={data.end}
           max={'2499-12-31'}
           min={data.start}
+          onKeyDown={(e) => {
+            e.preventDefault();
+          }}
         />
         <select
           name='status'

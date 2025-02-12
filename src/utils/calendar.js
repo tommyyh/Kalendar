@@ -69,3 +69,8 @@ export const getMonthName = (month) => {
 
   return months[month];
 };
+
+// Today's date
+const currentDate = new Date();
+export const currentYear = currentDate.getFullYear();
+export const currentMonth = currentDate.getMonth() + 1;

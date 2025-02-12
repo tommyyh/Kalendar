@@ -3,13 +3,9 @@ import Calendar from './components/Calendar/Calendar';
 import NewOrder from './components/NewOrder/NewOrder';
 import './global.scss';
 import EditItem from './components/Calendar/EditItem/EditItem';
+import { currentMonth, currentYear } from './utils/calendar';
 
-function App() {
-  // Today's date
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1;
-
+export const App = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editCode, setEditCode] = useState('');
   const [date, setDate] = useState({
@@ -68,6 +64,4 @@ function App() {
       />
     </>
   );
-}
-
-export default App;
+};
