@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import style from './form.module.scss';
+import { ItemsContext } from '../../../context/ItemsProvider';
 
-const Form = ({ formOpen, setItems, items }) => {
+const Form = ({ formOpen }) => {
+  const { items, setItems } = useContext(ItemsContext);
   const [data, setData] = useState({
     code: '',
     title: '',

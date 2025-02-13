@@ -4,9 +4,9 @@ import { populateDaysArray } from '../../utils/calendar';
 import DateNav from './DateNav/DateNav';
 import Header from './Header/Header';
 import Items from './Items/Items';
-import { DateContext } from '../context/DateProvide';
+import { DateContext } from '../../context/DateProvide';
 
-const Calendar = ({ items, setItems, setEditCode, setFormOpen, editCode }) => {
+const Calendar = () => {
   const { date, setDate } = useContext(DateContext);
 
   useEffect(() => {
@@ -18,13 +18,7 @@ const Calendar = ({ items, setItems, setEditCode, setFormOpen, editCode }) => {
       <DateNav date={date} setDate={setDate} />
 
       <Header date={date} />
-      <Items
-        items={items}
-        setEditCode={setEditCode}
-        setFormOpen={setFormOpen}
-        editCode={editCode}
-        setItems={setItems}
-      />
+      <Items />
     </div>
   );
 };

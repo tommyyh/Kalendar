@@ -2,68 +2,31 @@ import React, { useContext } from 'react';
 import style from './item.module.scss';
 import { v4 } from 'uuid';
 import {
-  isDateBetween as isDateBetweenFc,
+  fullDateConstructor,
+  getStatusClass,
+  isDateBetween,
   toggleShow,
 } from '../../../../utils/items';
-import { DateContext } from '../../../context/DateProvide';
+import { DateContext } from '../../../../context/DateProvide';
+import { EditCodeContext } from '../../../../context/EditCodeProvider';
+import { FormOpenContext } from '../../../../context/FormOpenProvider';
 
-const Item = ({
-  item,
-  setEditCode,
-  setFormOpen,
-  editCode,
-  items,
-  setItems,
-}) => {
+const Item = ({ item, items, setItems }) => {
+  const { setEditCode } = useContext(EditCodeContext);
+  const { setFormOpen } = useContext(FormOpenContext);
   const { date } = useContext(DateContext);
   const { title, code, parent, start, end, status, show } = item;
   const { year, month, days } = date;
   const firstChild = items.find((x) => x.parent === code);
   const expandedIndicator = firstChild?.show || (show && parent);
-  let statusClass;
   const isParent = items.filter((item) => item.parent === code).length >= 1;
+  const statusClass = getStatusClass(status, style);
 
-  // Allocate class depending on status -------------------------------------------------------
-  switch (status) {
-    case 'ongoing':
-      statusClass = style.activeOngoing;
-      break;
-    case 'unfinished':
-      statusClass = style.activeUnfinished;
-      break;
-    case 'finished':
-      statusClass = style.activeFinished;
-      break;
-    default:
-      statusClass = style.activeOngoing;
-      break;
-  }
+  const onClick = (day) => {
+    const selectedDate = fullDateConstructor(year, month, day);
 
-  const onClick = () => {
-    // setFormOpen(false);
-    // setEditCode('');
-
-    // // Change item -> Animation
-    // if (editCode) {
-    //   setTimeout(() => {
-    //     setEditCode(code);
-    //   }, 250);
-    // } else {
-    //   setEditCode(code);
-    // }
     setFormOpen(false);
-    setEditCode(code);
-  };
-
-  // Check if date is in between 2 dates
-  const isDateBetween = (day) => {
-    if (!start || !end) return false;
-
-    // Check if filled dates from next month based of of fullDate attr
-    let dateToCompare = `${year}-0${month}-${day.date}`;
-    if (day.fullDate) dateToCompare = day.fullDate;
-
-    return isDateBetweenFc(dateToCompare, start, end);
+    setEditCode({ code, selectedDate });
   };
 
   const showChildren = () => {
@@ -80,7 +43,6 @@ const Item = ({
           className={
             expandedIndicator ? `${style.code} ${style.active}` : style.code
           }
-          onClick={onClick}
         >
           {code}
         </li>
@@ -101,8 +63,8 @@ const Item = ({
         {days.map((day) => (
           <li
             key={v4()}
-            onClick={onClick}
-            id={isDateBetween(day) ? statusClass : ''}
+            onClick={() => onClick(day)}
+            id={isDateBetween(year, month, day, start, end) ? statusClass : ''}
           ></li>
         ))}
       </ul>

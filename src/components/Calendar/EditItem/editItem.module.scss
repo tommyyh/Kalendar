@@ -37,6 +37,10 @@
     &::placeholder {
       color: var(--primary);
     }
+  }
+
+  select {
+    cursor: pointer;
 
     option {
       color: var(--accent);

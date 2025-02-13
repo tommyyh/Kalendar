@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import style from './editItem.module.scss';
 import { deleteCascade } from '../../../utils/items';
+import { ItemsContext } from '../../../context/ItemsProvider';
+import { EditCodeContext } from '../../../context/EditCodeProvider';
 
-const EditItem = ({ setItems, items, editCode, setEditCode }) => {
-  const today = new Date();
-  const item = items.find((item) => item.code === editCode); // Find item -> Add existing values
+const EditItem = () => {
+  const { editCode, setEditCode } = useContext(EditCodeContext);
+  const { items, setItems } = useContext(ItemsContext);
+  const item = items.find((item) => item.code === editCode?.code); // Find item -> Add existing values
   const codesArray = items.map((item) => item.code); // For select tag
 
   const [data, setData] = useState({
@@ -20,7 +23,7 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
       end: item?.end || '',
       status: item?.status || 'ongoing',
     });
-  }, [editCode]);
+  }, [editCode?.code]);
 
   // On input change
   const onChange = (value, name) => {
@@ -32,7 +35,7 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
     // Find index of item -> update it in the duplicate array
     const { start, end, status } = data;
 
-    const itemIndex = items.findIndex((item) => item.code === editCode);
+    const itemIndex = items.findIndex((item) => item.code === editCode?.code);
     const itemsDupe = [...items];
     const updatedItem = {
       ...itemsDupe[itemIndex],
@@ -45,31 +48,35 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
     itemsDupe[itemIndex] = updatedItem;
 
     setItems(itemsDupe);
-    setEditCode(''); // Close form
+    setEditCode({ code: '', selectedDate: '' }); // Close form
   };
 
   // Change edit to a new item
   const selectNewItem = (code) => {
-    setEditCode(code);
+    setEditCode({ code, selectedDate: '' }); // --------------
   };
 
   // Delete from list
   const deleteItem = () => {
     // Delete all
-    const newArray = deleteCascade(editCode, items);
+    const newArray = deleteCascade(editCode?.code, items);
 
     setItems(newArray);
-    setEditCode('');
+    setEditCode({ code: '', selectedDate: '' });
   };
 
   return (
-    <form className={editCode ? `${style.form} ${style.formOpen}` : style.form}>
+    <form
+      className={
+        editCode?.code ? `${style.form} ${style.formOpen}` : style.form
+      }
+    >
       <div className={style.main}>
         <select
           name='code'
           onChange={(e) => selectNewItem(e.target.value)}
           style={{ width: '5rem' }}
-          defaultValue={editCode}
+          value={editCode?.code}
         >
           {codesArray.map((code) => (
             <option value={code} key={code}>
@@ -106,8 +113,8 @@ const EditItem = ({ setItems, items, editCode, setEditCode }) => {
           onChange={(e) => onChange(e.target.value, 'status')}
           value={data.status}
         >
-          <option value='ongoing'>❌ Nová</option>
-          <option value='unfinished'>🕗 V přípravě</option>
+          <option value='ongoing'>🕗 Nová</option>
+          <option value='unfinished'>🛠️ V přípravě</option>
           <option value='finished'>✔️ Hotová</option>
         </select>
 

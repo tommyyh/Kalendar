@@ -1,19 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import style from './newOrder.module.scss';
 import Form from './Form/Form';
+import { EditCodeContext } from '../../context/EditCodeProvider';
+import { FormOpenContext } from '../../context/FormOpenProvider';
 
-const NewOrder = ({
-  formOpen,
-  setFormOpen,
-  date,
-  setItems,
-  items,
-  editCode,
-  setEditCode,
-}) => {
+const NewOrder = () => {
+  const { editCode, setEditCode } = useContext(EditCodeContext);
+  const { formOpen, setFormOpen } = useContext(FormOpenContext);
+
   // Button on click
   const onClick = () => {
-    if (editCode) return setEditCode('');
+    if (editCode?.code) return setEditCode({ code: '', selectedDate: '' });
 
     setFormOpen(!formOpen);
   };
@@ -22,16 +19,16 @@ const NewOrder = ({
     <>
       <button
         className={
-          formOpen || editCode
+          formOpen || editCode?.code
             ? `${style.button} ${style.buttonOpen}`
             : style.button
         }
         onClick={onClick}
       >
-        {formOpen || editCode ? 'Zavřít' : 'Vložit zakázku'}
+        {formOpen || editCode?.code ? 'Zavřít' : 'Vložit zakázku'}
       </button>
 
-      <Form formOpen={formOpen} setItems={setItems} items={items} />
+      <Form formOpen={formOpen} />
     </>
   );
 };
