@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 const EditItem = () => {
   const { editCode, setEditCode } = useContext(EditCodeContext);
-  const { code, selectedDate } = editCode ?? {};
+  const { code, selectedDate, segmentId } = editCode ?? {};
   const { items, setItems } = useContext(ItemsContext);
   const item = items.find((item) => item.code === code); // Find item -> Add existing values
   const codesArray = items.map((item) => item.code); // For select tag
@@ -21,12 +21,24 @@ const EditItem = () => {
 
   // Item change -> Update existing data
   useEffect(() => {
+    const segment = item?.segments?.find((segment) => segment.id === segmentId);
+
+    if (segment) {
+      setData({
+        start: segment.start,
+        end: segment.end,
+        status: segment.status,
+      });
+
+      return;
+    }
+
     setData({
       start: item?.start || selectedDate || '',
       end: item?.end || selectedDate || '',
       status: item?.status || 'ongoing',
     });
-  }, [code, selectedDate]);
+  }, [code, selectedDate, segmentId]);
 
   // On input change
   const onChange = (value, name) => {
@@ -35,20 +47,58 @@ const EditItem = () => {
 
   // Submit form
   const submit = () => {
-    // Find index of item -> update it in the duplicate array
     const { start, end, status } = data;
 
+    // Find the index of the item
     const itemIndex = items.findIndex((item) => item.code === code);
-    const itemsDupe = [...items];
-    const updatedItem = {
+    if (itemIndex === -1) return; // Safety check
+
+    const itemsDupe = [...items]; // Clone array
+    let updatedSegments = [...(itemsDupe[itemIndex].segments || [])];
+
+    if (segmentId) {
+      // UPDATE an existing segment
+      updatedSegments = updatedSegments.map((segment) =>
+        segment.id === segmentId ? { ...segment, start, end, status } : segment
+      );
+    } else {
+      // ADD a new segment
+      updatedSegments.push({ id: v4(), start, end, status });
+    }
+
+    // Update the item in the array
+    itemsDupe[itemIndex] = {
       ...itemsDupe[itemIndex],
-      segments: [...item?.segments, { id: v4(), start, end, status }],
+      segments: updatedSegments,
     };
 
-    // Update and set state
-    itemsDupe[itemIndex] = updatedItem;
+    // Get the item's parent
+    const parentCode = itemsDupe[itemIndex].parent;
 
-    setItems(itemsDupe);
+    if (parentCode) {
+      // 1️⃣ Find all siblings (same parent)
+      const siblings = itemsDupe.filter((item) => item.parent === parentCode);
+
+      // 2️⃣ Sort siblings by the closest `end` date
+      siblings.sort((a, b) => {
+        const aEnd = new Date(
+          a.segments[a.segments.length - 1]?.end || '9999-12-31'
+        );
+        const bEnd = new Date(
+          b.segments[b.segments.length - 1]?.end || '9999-12-31'
+        );
+
+        return aEnd - bEnd;
+      });
+
+      // 3️⃣ Merge sorted siblings back into the original array
+      const otherItems = itemsDupe.filter((item) => item.parent !== parentCode);
+      setItems([...otherItems, ...siblings]); // Keep hierarchy intact
+    } else {
+      // If it's a top-level item, just update the list
+      setItems(itemsDupe);
+    }
+
     setEditCode({ code: '', selectedDate: '' }); // Close form
   };
 

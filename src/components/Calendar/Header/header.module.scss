@@ -33,7 +33,7 @@ $height: 2.915rem;
 
   // Code label
   .code {
-    min-width: 5rem;
+    min-width: 6.4rem;
     height: $height;
   }
 
@@ -47,4 +47,10 @@ $height: 2.915rem;
 
     font-size: 1.034rem;
   }
+}
+
+#today {
+  background: #ff3632;
+  border: 2px solid #fff;
+  color: #fff;
 }

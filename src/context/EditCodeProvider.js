@@ -5,6 +5,7 @@ export const EditCodeProvider = ({ children }) => {
   const [editCode, setEditCode] = useState({
     code: '',
     selectedDate: '',
+    segmentId: '',
   });
 
   return (

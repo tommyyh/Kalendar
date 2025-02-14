@@ -78,3 +78,44 @@ export const fullDateConstructor = (year, month, day) => {
 
   return date;
 };
+
+// Group
+export const groupSegments = (segments) => {
+  if (!segments || segments.length === 0) return [];
+
+  // Sort segments by start date
+  segments.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  const groups = []; // Array of groups
+
+  segments.forEach((segment) => {
+    let placed = false;
+
+    // Try segment in an existing group
+    for (const group of groups) {
+      if (!group.some((s) => isOverlapping(s, segment))) {
+        group.push(segment); // Add to the first non-overlapping group
+        placed = true;
+
+        break;
+      }
+    }
+
+    // If segment overlaps with everything -> create a new group
+    if (!placed) {
+      groups.push([segment]); // New group for the overlapping segment
+    }
+  });
+
+  return groups;
+};
+
+// Check if two segments overlap
+const isOverlapping = (segment1, segment2) => {
+  const start1 = new Date(segment1.start);
+  const end1 = new Date(segment1.end);
+  const start2 = new Date(segment2.start);
+  const end2 = new Date(segment2.end);
+
+  return start1 <= end2 && start2 <= end1;
+};

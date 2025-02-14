@@ -90,3 +90,6 @@ export const setNewDate = (
 
   setDate({ ...prevDate, year: newYear, month: newMonth, day: newDay });
 };
+
+// Is the date today
+export const isDateToday = (fullDate, date) => !fullDate && currentDay === date;

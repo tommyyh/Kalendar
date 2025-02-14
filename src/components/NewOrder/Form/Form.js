@@ -5,6 +5,7 @@ import Input from '../../Input/Input';
 
 const Form = ({ formOpen }) => {
   const { items, setItems } = useContext(ItemsContext);
+  const [error, setError] = useState('');
   const [data, setData] = useState({
     code: '',
     title: '',
@@ -18,6 +19,7 @@ const Form = ({ formOpen }) => {
 
   // Submit form
   const submit = () => {
+    const codeUsed = items.find((item) => item.code === data.code);
     const newItem = {
       code: data.code,
       title: data.title,
@@ -25,6 +27,8 @@ const Form = ({ formOpen }) => {
       segments: [],
       show: true,
     };
+
+    if (codeUsed) return setError('Kod musí být unikátní.');
 
     // Normal Item
     if (!data.parent) {
@@ -48,45 +52,53 @@ const Form = ({ formOpen }) => {
   };
 
   return (
-    <form className={formOpen ? `${style.form} ${style.formOpen}` : style.form}>
-      <Input
-        type='text'
-        placeholder='Kod zakázky'
-        name='code'
-        onChange={onChange}
-        value={data.code}
-      />
-      <Input
-        type='text'
-        placeholder='Název zakázky'
-        name='title'
-        onChange={onChange}
-        value={data.title}
-      />
-      <select
-        name='parent'
-        onChange={(e) => onChange(e.target.value, 'parent')}
-        value={data.parent}
+    <>
+      <form
+        className={formOpen ? `${style.form} ${style.formOpen}` : style.form}
       >
-        <option defaultValue value={items[0]}>
-          Kod nadřazené zakázky
-        </option>
-
-        {items.map((item) => (
-          <option value={item.code} key={item.code}>
-            {item.code}
+        <Input
+          type='text'
+          placeholder='Kod zakázky'
+          name='code'
+          onChange={onChange}
+          onFocus={() => setError('')}
+          maxLength={8}
+          value={data.code}
+        />
+        <Input
+          type='text'
+          placeholder='Název zakázky'
+          name='title'
+          onChange={onChange}
+          value={data.title}
+        />
+        <select
+          name='parent'
+          onChange={(e) => onChange(e.target.value, 'parent')}
+          value={data.parent}
+        >
+          <option defaultValue value={items[0]}>
+            Kod nadřazené zakázky
           </option>
-        ))}
-      </select>
 
-      <button
-        type='button'
-        onClick={submit}
-        disabled={!data.code || !data.title}
-      >
-        Přidat zakázku
-      </button>
-    </form>
+          {items.map((item) => (
+            <option value={item.code} key={item.code}>
+              {item.code}
+            </option>
+          ))}
+        </select>
+
+        <button
+          type='button'
+          onClick={submit}
+          disabled={!data.code || !data.title}
+        >
+          Přidat zakázku
+        </button>
+      </form>
+
+      {error && <p style={{ margin: '0.4rem 0 0 0' }}>{error}</p>}
+    </>
   );
 };
 
