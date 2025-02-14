@@ -10,15 +10,20 @@ const Calendar = () => {
   const { date, setDate } = useContext(DateContext);
 
   useEffect(() => {
-    setDate({ ...date, days: populateDaysArray(date.year, date.month) });
-  }, [date.year, date.month]);
+    setDate({
+      ...date,
+      days: populateDaysArray(date.year, date.month, date.day),
+    });
+  }, [date.year, date.month, date.day]);
 
   return (
     <div className={style.cont}>
       <DateNav date={date} setDate={setDate} />
 
-      <Header date={date} />
-      <Items />
+      <div className={style.calendar}>
+        <Header date={date} />
+        <Items />
+      </div>
     </div>
   );
 };

@@ -1,52 +1,46 @@
-// Get last day of the month
-const getLastDay = (year, month) => {
-  return new Date(year, month, 0).getDate();
-};
-
 // Get the name of the day
-const getDayName = (year, month, day) => {
+export const getDayName = (year, month, day) => {
   const dayIndex = new Date(year, month - 1, day).getDay();
   const daysOfWeek = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
 
   return daysOfWeek[dayIndex];
 };
 
+// Get the amount of days in a date
+const getDaysInMonth = (year, month) => {
+  return new Date(year, month, 0).getDate();
+};
+
 // Populate the days array, including next month's days if needed
-export const populateDaysArray = (year, month) => {
-  const lastDay = getLastDay(year, month);
+export const populateDaysArray = (year, month, day) => {
   const days = [];
+  const daysInMonth = getDaysInMonth(year, month);
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  let date; // Each day
 
-  // Populate array with days in the current month
-  for (let x = 1; x <= lastDay; x++) {
-    const dayName = getDayName(year, month, x);
-    const day = {
-      date: x,
-      dateName: dayName,
-    };
+  for (let x = 0; x < 14; x++) {
+    const dateNum = parseInt(day) + x;
 
-    days.push(day);
-  }
+    if (dateNum > daysInMonth) {
+      const newDate = dateNum - daysInMonth;
+      const fullNextMonth = nextMonth >= 10 ? nextMonth : `0${nextMonth}`; // If month 1 digit - append 0
+      const fullNewDate = newDate >= 10 ? newDate : `0${newDate}`; // If month 1 digit - append 0
 
-  // Populate with next month's days if less than 31 days
-  if (days.length < 31) {
-    const nextMonth = month === 12 ? 1 : month + 1;
-    const nextYear = month === 12 ? year + 1 : year;
-    const missingDays = 31 - days.length;
-
-    // Find the next available day in the next month to start filling the last row
-    for (let i = 1; i <= missingDays; i++) {
-      const dayName = getDayName(nextYear, nextMonth, i);
-      const day = {
-        date: i,
-        dateName: dayName,
-        fullDate: `${nextYear}-${nextMonth}-${i}`,
+      date = {
+        date: newDate,
+        dateName: getDayName(nextYear, nextMonth, fullNewDate),
+        fullDate: `${nextYear}-${fullNextMonth}-${fullNewDate}`,
       };
-
-      days.push(day);
+    } else {
+      date = {
+        date: dateNum,
+        dateName: getDayName(year, month, dateNum),
+      };
     }
+    days.push(date);
   }
 
-  // Return the days of the current month and the next month's overflow days
   return days;
 };
 
@@ -74,3 +68,25 @@ export const getMonthName = (month) => {
 const currentDate = new Date();
 export const currentYear = currentDate.getFullYear();
 export const currentMonth = currentDate.getMonth() + 1;
+export const currentDay = currentDate.getDate();
+
+// Navigate calendar
+export const setNewDate = (
+  year,
+  month,
+  day,
+  numberOfDays,
+  prevDate,
+  setDate
+) => {
+  const date = new Date(year, month - 1, day);
+
+  // Get date from x amount of days from today
+  date.setDate(date.getDate() + Number(numberOfDays)); // If numberOfDays eg. -10 -> subtract instead of add
+
+  const newYear = date.getFullYear();
+  const newMonth = date.getMonth() + 1;
+  const newDay = date.getDate();
+
+  setDate({ ...prevDate, year: newYear, month: newMonth, day: newDay });
+};

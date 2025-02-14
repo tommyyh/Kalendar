@@ -1,0 +1,23 @@
+.input {
+  margin: 0 0.5rem 0 0;
+  height: 100%;
+  width: 15%;
+  padding: 0 0.8rem;
+
+  background: rgb(255, 255, 255, 0.2);
+  border-radius: 0.2rem;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--accent);
+  transition: var(--transition);
+  color: var(--primary);
+
+  &::placeholder {
+    color: var(--primary);
+  }
+
+  option {
+    color: var(--accent);
+  }
+}

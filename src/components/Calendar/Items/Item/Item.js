@@ -3,24 +3,27 @@ import style from './item.module.scss';
 import { v4 } from 'uuid';
 import {
   fullDateConstructor,
-  getStatusClass,
   isDateBetween,
   toggleShow,
 } from '../../../../utils/items';
 import { DateContext } from '../../../../context/DateProvide';
 import { EditCodeContext } from '../../../../context/EditCodeProvider';
 import { FormOpenContext } from '../../../../context/FormOpenProvider';
+import { getDayName } from '../../../../utils/calendar';
 
 const Item = ({ item, items, setItems }) => {
   const { setEditCode } = useContext(EditCodeContext);
   const { setFormOpen } = useContext(FormOpenContext);
   const { date } = useContext(DateContext);
-  const { title, code, parent, start, end, status, show } = item;
-  const { year, month, days } = date;
+  const { title, code, parent, segments, show } = item;
+  const { year, month, day: today, days } = date;
   const firstChild = items.find((x) => x.parent === code);
   const expandedIndicator = firstChild?.show || (show && parent);
   const isParent = items.filter((item) => item.parent === code).length >= 1;
-  const statusClass = getStatusClass(status, style);
+  const todaysDate = {
+    date: today,
+    dateName: getDayName(year, month, today),
+  };
 
   const onClick = (day) => {
     const selectedDate = fullDateConstructor(year, month, day);
@@ -43,6 +46,7 @@ const Item = ({ item, items, setItems }) => {
           className={
             expandedIndicator ? `${style.code} ${style.active}` : style.code
           }
+          onClick={() => onClick(todaysDate)}
         >
           {code}
         </li>
@@ -50,6 +54,7 @@ const Item = ({ item, items, setItems }) => {
           className={
             isParent ? `${style.item} ${style.parentItem}` : style.item
           }
+          onClick={() => onClick(todaysDate)}
         >
           {isParent && (
             <button onClick={showChildren}>
@@ -64,7 +69,11 @@ const Item = ({ item, items, setItems }) => {
           <li
             key={v4()}
             onClick={() => onClick(day)}
-            id={isDateBetween(year, month, day, start, end) ? statusClass : ''}
+            id={
+              isDateBetween(year, month, day, segments, style)
+                ? isDateBetween(year, month, day, segments, style)
+                : ''
+            }
           ></li>
         ))}
       </ul>

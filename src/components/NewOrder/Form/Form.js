@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import style from './form.module.scss';
 import { ItemsContext } from '../../../context/ItemsProvider';
+import Input from '../../Input/Input';
 
 const Form = ({ formOpen }) => {
   const { items, setItems } = useContext(ItemsContext);
@@ -17,59 +18,49 @@ const Form = ({ formOpen }) => {
 
   // Submit form
   const submit = () => {
-    // ----------------------
-    if (!data.parent) {
-      setItems([
-        ...items,
-        { code: data.code, title: data.title, parent: data.parent, show: true },
-      ]);
-      // Empty form
-      setData({ code: '', title: '', parent: '' });
+    const newItem = {
+      code: data.code,
+      title: data.title,
+      parent: data.parent,
+      segments: [],
+      show: true,
+    };
 
-      return;
+    // Normal Item
+    if (!data.parent) {
+      setItems([...items, newItem]);
+      return setData({ code: '', title: '', parent: '' }); // Empty form
     }
 
+    // Item with a parent
     let dupe = [...items];
     const parentIndex = items.findIndex((x) => x.code === data.parent);
 
     // Insert children right after parent
-    dupe.splice(parentIndex + 1, 0, {
-      code: data.code,
-      title: data.title,
-      parent: data.parent,
-      show: true,
-    });
-
+    dupe.splice(parentIndex + 1, 0, newItem);
     // Ensure all children of the parent have show: true
     dupe = dupe.map((item) =>
       item.parent === data.parent ? { ...item, show: true } : item
     );
 
     setItems(dupe);
-
-    // Empty form
-    setData({ code: '', title: '', parent: '' });
-
-    setItems(dupe);
-
-    // Empty form
-    setData({ code: '', title: '', parent: '' });
+    setData({ code: '', title: '', parent: '' }); // Empty form
   };
 
   return (
     <form className={formOpen ? `${style.form} ${style.formOpen}` : style.form}>
-      <input
+      <Input
         type='text'
         placeholder='Kod zakázky'
         name='code'
-        onChange={(e) => onChange(e.target.value, 'code')}
+        onChange={onChange}
         value={data.code}
       />
-      <input
+      <Input
         type='text'
         placeholder='Název zakázky'
         name='title'
-        onChange={(e) => onChange(e.target.value, 'title')}
+        onChange={onChange}
         value={data.title}
       />
       <select

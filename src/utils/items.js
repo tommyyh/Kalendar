@@ -3,19 +3,26 @@ const converToDate = (date) => {
   return new Date(date).toISOString().split('T')[0];
 };
 
-export const isDateBetween = (year, month, day, start, end) => {
-  if (!start || !end) return false;
+export const isDateBetween = (year, month, day, segments, style) => {
+  if (!segments || segments.length === 0) return false;
 
-  // Check if filled dates from next month based of of fullDate attr
   const date = fullDateConstructor(year, month, day);
-
-  // Convert dates to yyyy-mm-dd
   const dateString = converToDate(date);
-  const startString = converToDate(start);
-  const endString = converToDate(end);
 
-  // Check if the date is between the start and end dates (inclusive)
-  return dateString >= startString && dateString <= endString;
+  // Use find to get the first segment that matches the date
+  const matchingSegment = segments.find((segment) => {
+    if (!segment.start || !segment.end) return false;
+
+    const startString = converToDate(segment.start);
+    const endString = converToDate(segment.end);
+
+    return dateString >= startString && dateString <= endString;
+  });
+
+  // If a matching segment is found, return its status class
+  if (matchingSegment) return getStatusClass(matchingSegment.status, style);
+
+  return false;
 };
 
 // Recursive function -> delete an item and all its descendants
@@ -64,7 +71,8 @@ export const getStatusClass = (status, style) => {
 
 // Construct full date from day. If day is from next month - convert
 export const fullDateConstructor = (year, month, day) => {
-  let date = `${year}-0${month}-${day.date}`;
+  const fullMonth = month >= 10 ? month : `0${month}`; // Check if month is 2 digits
+  let date = `${year}-${fullMonth}-${day.date}`;
 
   if (day.fullDate) date = day.fullDate;
 
