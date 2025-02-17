@@ -83,18 +83,19 @@ export const fullDateConstructor = (year, month, day) => {
 export const groupSegments = (segments) => {
   if (!segments || segments.length === 0) return [];
 
+  const groups = [];
+
   // Sort segments by start date
   segments.sort((a, b) => new Date(a.start) - new Date(b.start));
-
-  const groups = []; // Array of groups
-
+  // Place segments in groups
   segments.forEach((segment) => {
     let placed = false;
 
-    // Try segment in an existing group
+    // Try to place in existing group
     for (const group of groups) {
+      // If found -> place in group
       if (!group.some((s) => isOverlapping(s, segment))) {
-        group.push(segment); // Add to the first non-overlapping group
+        group.push(segment);
         placed = true;
 
         break;
@@ -103,7 +104,7 @@ export const groupSegments = (segments) => {
 
     // If segment overlaps with everything -> create a new group
     if (!placed) {
-      groups.push([segment]); // New group for the overlapping segment
+      groups.push([segment]);
     }
   });
 
@@ -118,4 +119,23 @@ const isOverlapping = (segment1, segment2) => {
   const end2 = new Date(segment2.end);
 
   return start1 <= end2 && start2 <= end1;
+};
+
+// Remove segment
+export const removeSegment = (segmentId, items) => {
+  const segmentItemIndex = items.findIndex((item) =>
+    item.segments?.some((segment) => segment.id === segmentId)
+  );
+
+  if (segmentItemIndex === -1) return items; // If segment not found -> return original array
+
+  // Remove segment if index matches
+  return items.map((item, index) =>
+    index === segmentItemIndex
+      ? {
+          ...item,
+          segments: item.segments.filter((segment) => segment.id !== segmentId),
+        }
+      : item
+  );
 };

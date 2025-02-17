@@ -60,6 +60,26 @@ $height: 2.915rem;
     min-width: 20rem;
     min-height: $height;
     height: auto;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      height: 7px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #c6c6c6;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #8a8a8a;
+    }
   }
 
   .parentItem {
@@ -105,28 +125,115 @@ $height: 2.915rem;
   display: flex;
 }
 
+#activeOngoing,
+#activeUnfinished,
+#activeFinished {
+  display: initial;
+  align-items: flex-end;
+  justify-content: flex-start;
+
+  padding: 5px 5px 0 0;
+  position: relative;
+
+  transition: var(--transition);
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &::before {
+    display: none;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &:hover {
+    opacity: initial;
+  }
+}
+
 // Status colors
 #activeOngoing {
   background: #ff2e2a;
   border-color: transparent;
+
+  &::before {
+    content: '🕗';
+  }
 }
 
 #activeUnfinished {
   background: #ff8f18;
   border-color: transparent;
+
+  &::before {
+    content: '🛠️';
+  }
 }
 
 #activeFinished {
   background: #1bfc31;
   border-color: transparent;
+
+  &::before {
+    content: '✔️';
+  }
 }
 
-#activeOngoing,
-#activeUnfinished,
-#activeFinished {
-  transition: var(--transition);
+.removeSegment {
+  opacity: 0;
+  pointer-events: none;
 
-  &:hover {
-    opacity: 0.85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0;
+  min-width: 0;
+  border: none;
+  background: rgb(255, 255, 255, 0.75);
+  color: var(--accent);
+  font-weight: 600;
+  border-radius: 0.1rem;
+  transition: var(--transition);
+}
+
+#first {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -2.8px;
+    top: -3rem;
+    width: 3px;
+    height: $height;
+
+    // background: green;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 46, 42, 1) 0%,
+      rgba(72, 31, 255, 1) 69%
+    );
+  }
+}
+
+.lead {
+  border-left: 2px solid #fff !important;
+
+  &::before {
+    display: initial !important;
+  }
+}
+
+#codeSelected {
+  width: fit-content;
+  border-radius: 0.4rem;
+  outline: 1px solid rgb(255, 46, 42, 0.6);
+
+  .code {
+    background: rgb(255, 46, 42, 0.32);
   }
 }

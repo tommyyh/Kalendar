@@ -28,9 +28,9 @@ const Form = ({ formOpen }) => {
       show: true,
     };
 
-    if (codeUsed) return setError('Kod musí být unikátní.');
+    if (codeUsed) return setError('Kod musí být unikátní.'); // Code has to be unique
 
-    // Normal Item
+    // If no parent code = Normal Item
     if (!data.parent) {
       setItems([...items, newItem]);
       return setData({ code: '', title: '', parent: '' }); // Empty form
@@ -42,7 +42,7 @@ const Form = ({ formOpen }) => {
 
     // Insert children right after parent
     dupe.splice(parentIndex + 1, 0, newItem);
-    // Ensure all children of the parent have show: true
+    // All children of parent -> show: true
     dupe = dupe.map((item) =>
       item.parent === data.parent ? { ...item, show: true } : item
     );
@@ -74,10 +74,12 @@ const Form = ({ formOpen }) => {
         />
         <select
           name='parent'
-          onChange={(e) => onChange(e.target.value, 'parent')}
+          onChange={(e) => {
+            onChange(e.target.value, 'parent');
+          }}
           value={data.parent}
         >
-          <option defaultValue value={items[0]}>
+          <option defaultValue value={''}>
             Kod nadřazené zakázky
           </option>
 

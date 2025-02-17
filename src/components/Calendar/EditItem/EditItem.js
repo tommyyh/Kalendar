@@ -7,32 +7,31 @@ import Input from '../../Input/Input';
 import { v4 } from 'uuid';
 
 const EditItem = () => {
-  const { editCode, setEditCode } = useContext(EditCodeContext);
-  const { code, selectedDate, segmentId } = editCode ?? {};
-  const { items, setItems } = useContext(ItemsContext);
-  const item = items.find((item) => item.code === code); // Find item -> Add existing values
-  const codesArray = items.map((item) => item.code); // For select tag
-
   const [data, setData] = useState({
     start: '',
     end: '',
     status: 'ongoing',
   });
+  const { editCode, setEditCode } = useContext(EditCodeContext);
+  const { code, selectedDate, segmentId } = editCode ?? {};
+  const { items, setItems } = useContext(ItemsContext);
+  const item = items.find((item) => item.code === code);
+  const codesArray = items.map((item) => item.code);
 
-  // Item change -> Update existing data
   useEffect(() => {
     const segment = item?.segments?.find((segment) => segment.id === segmentId);
 
+    // If user clicked on segment -> Edit instead of new
     if (segment) {
       setData({
         start: segment.start,
         end: segment.end,
         status: segment.status,
       });
-
       return;
     }
 
+    // New segment
     setData({
       start: item?.start || selectedDate || '',
       end: item?.end || selectedDate || '',
@@ -40,7 +39,6 @@ const EditItem = () => {
     });
   }, [code, selectedDate, segmentId]);
 
-  // On input change
   const onChange = (value, name) => {
     setData({ ...data, [name]: value });
   };
@@ -48,70 +46,42 @@ const EditItem = () => {
   // Submit form
   const submit = () => {
     const { start, end, status } = data;
-
-    // Find the index of the item
     const itemIndex = items.findIndex((item) => item.code === code);
-    if (itemIndex === -1) return; // Safety check
+
+    if (itemIndex === -1) return; // Make sure item exists
 
     const itemsDupe = [...items]; // Clone array
     let updatedSegments = [...(itemsDupe[itemIndex].segments || [])];
 
+    // Update segment / New
     if (segmentId) {
-      // UPDATE an existing segment
       updatedSegments = updatedSegments.map((segment) =>
         segment.id === segmentId ? { ...segment, start, end, status } : segment
       );
     } else {
-      // ADD a new segment
       updatedSegments.push({ id: v4(), start, end, status });
     }
 
-    // Update the item in the array
+    // Insert into array
     itemsDupe[itemIndex] = {
       ...itemsDupe[itemIndex],
       segments: updatedSegments,
     };
 
-    // Get the item's parent
-    const parentCode = itemsDupe[itemIndex].parent;
-
-    if (parentCode) {
-      // 1️⃣ Find all siblings (same parent)
-      const siblings = itemsDupe.filter((item) => item.parent === parentCode);
-
-      // 2️⃣ Sort siblings by the closest `end` date
-      siblings.sort((a, b) => {
-        const aEnd = new Date(
-          a.segments[a.segments.length - 1]?.end || '9999-12-31'
-        );
-        const bEnd = new Date(
-          b.segments[b.segments.length - 1]?.end || '9999-12-31'
-        );
-
-        return aEnd - bEnd;
-      });
-
-      // 3️⃣ Merge sorted siblings back into the original array
-      const otherItems = itemsDupe.filter((item) => item.parent !== parentCode);
-      setItems([...otherItems, ...siblings]); // Keep hierarchy intact
-    } else {
-      // If it's a top-level item, just update the list
-      setItems(itemsDupe);
-    }
-
-    setEditCode({ code: '', selectedDate: '' }); // Close form
+    setItems(itemsDupe);
+    setEditCode({ code: '', selectedDate: '' });
   };
 
-  // Change edit to a new item
+  // Select new item with Code
   const selectNewItem = (code) => {
-    setEditCode({ code, selectedDate: '' }); // --------------
+    const today = new Date().toISOString().split('T')[0];
+
+    setEditCode({ code, selectedDate: today });
   };
 
-  // Delete from list
+  // Delete item
   const deleteItem = () => {
-    // Delete all
     const newArray = deleteCascade(code, items);
-
     setItems(newArray);
     setEditCode({ code: '', selectedDate: '' });
   };
